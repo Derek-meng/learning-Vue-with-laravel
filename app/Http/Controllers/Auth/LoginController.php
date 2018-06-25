@@ -1,12 +1,15 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Proxy\TokenProxy;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
+    /** @var TokenProxy $proxy */
+    protected $proxy;
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -17,7 +20,6 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-
     use AuthenticatesUsers;
 
     /**
@@ -30,10 +32,21 @@ class LoginController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param TokenProxy $proxy
      */
-    public function __construct()
+    public function __construct(TokenProxy $proxy)
     {
         $this->middleware('guest')->except('logout');
+        $this->proxy = $proxy;
+    }
+
+    /**
+     * login
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\libraries\Network\CurlExeFailException
+     */
+    public function login()
+    {
+        return $this->proxy->login();
     }
 }
