@@ -41,14 +41,17 @@
         },
         methods: {
             login() {
-                let formData = {
-                    email: this.email,
-                    password: this.password,
-                }
-                this.$store.dispatch('loginRequest', formData).then(response => {
-                    this.$router.push({name: 'profile'})
+                this.$validator.validateAll().then(res => {
+                    if (res) {
+                        let formData = {
+                            email: this.email,
+                            password: this.password,
+                        }
+                        this.$store.dispatch('loginRequest', formData).then(response => {
+                            this.$router.push({name: 'profile'})
+                        })
+                    }
                 })
-
             }
         }
     }

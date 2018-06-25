@@ -49,4 +49,12 @@ class LoginController extends Controller
     {
         return $this->proxy->login();
     }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        return $this->proxy->logout();
+    }
 }

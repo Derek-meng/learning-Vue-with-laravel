@@ -47142,6 +47142,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 var routes = [{
     path: '/',
+    name: 'home',
     component: __webpack_require__(49),
     meta: {}
 }, {
@@ -47157,12 +47158,12 @@ var routes = [{
     path: '/register',
     name: 'register',
     component: __webpack_require__(61),
-    meta: {}
+    meta: { requiresGuest: true }
 }, {
     path: '/login',
     name: 'login',
     component: __webpack_require__(72),
-    meta: {}
+    meta: { requiresGuest: true }
 }, {
     path: '/confirm',
     name: 'confirm',
@@ -47181,10 +47182,17 @@ var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
 
 router.beforeEach(function (to, from, next) {
     if (to.meta.requiresAuth) {
-        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
+        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.AuthUser.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
             return next();
         } else {
             return next({ 'name': 'login' });
+        }
+    }
+    if (to.meta.requiresGuest) {
+        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.AuthUser.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
+            return next({ 'name': 'home' });
+        } else {
+            return next();
         }
     }
     return next();
@@ -47197,6 +47205,8 @@ router.beforeEach(function (to, from, next) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mutation_type__ = __webpack_require__(47);
+var _mutations;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -47207,21 +47217,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         name: null,
         email: null
     },
-    mutations: _defineProperty({}, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */], function (state, payload) {
+    mutations: (_mutations = {}, _defineProperty(_mutations, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */], function (state, payload) {
         state.authenticated = true;
         state.name = payload.user.name;
         state.email = payload.user.email;
-    }),
+    }), _defineProperty(_mutations, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["b" /* UNSET_AUTH_USER */], function (state) {
+        state.authenticated = false;
+        state.name = null;
+        state.email = null;
+    }), _mutations),
     actions: {
         setAuthUser: function setAuthUser(_ref) {
             var commit = _ref.commit,
                 dispatch = _ref.dispatch;
 
-            axios.get('/api/user').then(function (response) {
+            return axios.get('/api/user').then(function (response) {
                 commit({
                     type: __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */],
                     user: response.data
                 });
+            });
+        },
+        unsetAuthUser: function unsetAuthUser(_ref2) {
+            var commit = _ref2.commit;
+
+            commit({
+                type: __WEBPACK_IMPORTED_MODULE_0__mutation_type__["b" /* UNSET_AUTH_USER */]
             });
         }
     }
@@ -47233,7 +47254,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SET_AUTH_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return UNSET_AUTH_USER; });
 var SET_AUTH_USER = 'SET_AUTH_USER';
+var UNSET_AUTH_USER = 'UNSET_AUTH_USER';
 
 /***/ }),
 /* 48 */
@@ -47241,6 +47264,8 @@ var SET_AUTH_USER = 'SET_AUTH_USER';
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mutation_type__ = __webpack_require__(47);
+
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -47248,11 +47273,19 @@ var SET_AUTH_USER = 'SET_AUTH_USER';
         loginRequest: function loginRequest(_ref, formData) {
             var dispatch = _ref.dispatch;
 
-            axios.post('/api/login', formData).then(function (response) {
+            return axios.post('/api/login', formData).then(function (response) {
                 __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__["a" /* default */].setToken(response.data.token);
                 dispatch('setAuthUser');
             }).catch(function (error) {
                 console.log(error.response);
+            });
+        },
+        logoutRequest: function logoutRequest(_ref2) {
+            var dispatch = _ref2.dispatch;
+
+            return axios.get('/api/logout').then(function (response) {
+                __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__["a" /* default */].removeToken();
+                dispatch('unsetAuthUser');
             });
         }
     }
@@ -48604,7 +48637,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -48662,12 +48695,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         login: function login() {
             var _this = this;
 
-            var formData = {
-                email: this.email,
-                password: this.password
-            };
-            this.$store.dispatch('loginRequest', formData).then(function (response) {
-                _this.$router.push({ name: 'profile' });
+            this.$validator.validateAll().then(function (res) {
+                if (res) {
+                    var formData = {
+                        email: _this.email,
+                        password: _this.password
+                    };
+                    _this.$store.dispatch('loginRequest', formData).then(function (response) {
+                        _this.$router.push({ name: 'profile' });
+                    });
+                }
             });
         }
     }
@@ -49163,6 +49200,7 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_TopMenu__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_TopMenu___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__common_TopMenu__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers_jwt__ = __webpack_require__(5);
 //
 //
 //
@@ -49172,10 +49210,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+    created: function created() {
+        if (__WEBPACK_IMPORTED_MODULE_1__helpers_jwt__["a" /* default */].getToken()) {
+            this.$store.dispatch('setAuthUser');
+        }
+    },
+
     components: {
         TopMenu: __WEBPACK_IMPORTED_MODULE_0__common_TopMenu___default.a
     }
@@ -49267,7 +49312,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -49315,7 +49360,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         user: function user(state) {
             return state.AuthUser;
         }
-    }))
+    })),
+    methods: {
+        logout: function logout() {
+            var _this = this;
+
+            this.$store.dispatch('logoutRequest').then(function (response) {
+                _this.$router.push({ name: 'home' });
+            });
+        }
+    }
 });
 
 /***/ }),
@@ -49365,7 +49419,21 @@ var render = function() {
               : _vm._e(),
             _vm._v(" "),
             _vm.user.authenticated
-              ? _c("li", [_c("a", { attrs: { href: "#" } }, [_vm._v("退出")])])
+              ? _c("li", [
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.logout($event)
+                        }
+                      }
+                    },
+                    [_vm._v("退出")]
+                  )
+                ])
               : _vm._e()
           ],
           1
